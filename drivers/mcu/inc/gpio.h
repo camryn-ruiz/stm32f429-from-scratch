@@ -56,4 +56,23 @@ typedef struct {
 #define GPIOJ ((GPIO_TypeDef*) GPIOJ_BASE_ADDR)
 #define GPIOK ((GPIO_TypeDef*) GPIOK_BASE_ADDR)
 
+typedef enum {
+    GPIO_MODE_INPUT = 0x00U,
+    GPIO_MODE_OUTPUT = 0x01U,
+    GPIO_MODE_ALTFN = 0x02U,
+    GPIO_MODE_ANALOG = 0x03U,
+} GPIO_Mode;
+
+// GPIO Helper Fuinctions Prototypes:
+// TODO: Implement Status later for Error Handling in these functions
+void gpio_init(void);
+void gpio_set_mode(GPIO_TypeDef* GPIOx, uint32_t mode);
+
+void gpio_set_pin(GPIO_TypeDef* GPIOx, uint32_t pin);
+void gpio_clear_pin(GPIO_TypeDef* GPIOx, uint32_t pin);
+void gpio_toggle_pin(GPIO_TypeDef* GPIOx, uint32_t pin);
+
+uint32_t gpio_read_pin(GPIO_TypeDef* GPIOx, uint32_t pin);
+void gpio_write_pin(GPIO_TypeDef* GPIOx, uint32_t pin, uint32_t value);
+
 #endif // _GPIO_H

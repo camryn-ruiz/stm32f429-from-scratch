@@ -1,7 +1,9 @@
 COMPILER = arm-none-eabi-gcc
 APPLICATION_CODE = application/*.c
+MCU_DRIVERS = drivers/mcu/src/*.c
 LINKER_SCRIPT = linker/stm32f429_linker.ld
 STARTUP_SCRIPT = startup/stm32f429_startup.c
+SRC_CODE = $(APPLICATION_CODE) $(MCU_DRIVERS) $(STARTUP_SCRIPT)
 OUT_DIR = build
 ELF_FILE = $(OUT_DIR)/blink.elf
 OPT ?= -O0
@@ -15,7 +17,7 @@ build:
 	@mkdir -p $(OUT_DIR)
 	@rm -f $(ELF_FILE)
 	@echo "Compiling application..."
-	$(COMPILER) $(APPLICATION_CODE) $(STARTUP_SCRIPT) $(CFLAGS) $(LDFLAGS) -o $(ELF_FILE) $(INC_DIRS)
+	$(COMPILER) $(SRC_CODE) $(CFLAGS) $(LDFLAGS) -o $(ELF_FILE) $(INC_DIRS)
 
 flash:
 	@echo "======================================"

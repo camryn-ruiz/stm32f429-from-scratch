@@ -1,15 +1,7 @@
 #include <stdint.h>
+#include "stm32f429.h"
+#include "rcc.h"
 #include "gpio.h"
-
-// AHB1 Peripheral:
-#define PERIPHERAL_BASE (0x40000000U)
-#define AHB1_BASE_ADDR (PERIPHERAL_BASE + 0x20000U)
-
-// RCC Peripheral:
-#define RCC_BASE (AHB1_BASE_ADDR + 0x3800)
-#define RCC_AHB1ENR_OFFSET (0x30U)
-#define RCC_AHB1ENR_GPIOGEN (0x06U)
-#define RCC_AHB1ENR ((volatile uint32_t*) (RCC_BASE + RCC_AHB1ENR_OFFSET))
 
 // STM32F429 Eval Board on Board LEDs:
 #define GREEN_LED_PIN 13U
@@ -20,13 +12,18 @@
 void main(void) {
     *RCC_AHB1ENR |= (1 << RCC_AHB1ENR_GPIOGEN); // Turn on RCC for GPIOG Peripheral
 
-    GPIOG->MODER &= ~((3 << 26) | (3 << 28)); // Clear Bits for Pins 13 & 14
-    GPIOG->MODER |= (1 << 26) | (1 << 28); // Set MODER13=01 & MODER14=01
+    //GPIOG->MODER &= ~((3 << 26) | (3 << 28)); // Clear Bits for Pins 13 & 14
+    //GPIOG->MODER |= (1 << 26) | (1 << 28); // Set MODER13=01 & MODER14=01
+    gpio_set_mode(GPIOG, GREEN_LED_PIN, GPIO_MODE_OUTPUT);
+    gpio_set_mode(GPIOG, RED_LED_PIN, GPIO_MODE_OUTPUT);
+    gpio_set_pin(GPIOG, GREEN_LED_PIN);
 
     while (1) {
-        GPIOG->BSRR = RED_LED_MASK | (GREEN_LED_MASK << 16); // LEDs <R|G> : <ON|OFF>
+        //GPIOG->BSRR = RED_LED_MASK | (GREEN_LED_MASK << 16); // LEDs <R|G> : <ON|OFF>
+        gpio_toggle_pin(GPIOG, GREEN_LED_PIN);
+        gpio_toggle_pin(GPIOG, RED_LED_PIN);
         for (volatile uint32_t i = 0; i < 1000000; i++); // Delay
-        GPIOG->BSRR = (RED_LED_MASK << 16) | GREEN_LED_MASK; // LEDs <R|G> : <OFF|ON>
-        for (volatile uint32_t i = 0; i < 1000000; i++); // Delay
+        //GPIOG->BSRR = (RED_LED_MASK << 16) | GREEN_LED_MASK; // LEDs <R|G> : <OFF|ON>
+        //for (volatile uint32_t i = 0; i < 1000000; i++); // Delayl
     }
 }

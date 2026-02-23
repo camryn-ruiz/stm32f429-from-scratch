@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include "status.h"
 
 #ifndef _GPIO_H
 #define _GPIO_H
@@ -65,14 +66,14 @@ typedef enum {
 
 // GPIO Helper Fuinctions Prototypes:
 // TODO: Implement Status later for Error Handling in these functions
-void gpio_init(void);
-void gpio_set_mode(GPIO_TypeDef* GPIOx, uint32_t mode);
+STATUS_CODE gpio_init(void);
+STATUS_CODE gpio_set_mode(GPIO_TypeDef* GPIOx, uint8_t pin, uint8_t mode);
 
-void gpio_set_pin(GPIO_TypeDef* GPIOx, uint32_t pin);
-void gpio_clear_pin(GPIO_TypeDef* GPIOx, uint32_t pin);
-void gpio_toggle_pin(GPIO_TypeDef* GPIOx, uint32_t pin);
+STATUS_CODE gpio_set_pin(GPIO_TypeDef* GPIOx, uint32_t pin);
+STATUS_CODE gpio_clear_pin(GPIO_TypeDef* GPIOx, uint32_t pin);
+STATUS_CODE gpio_toggle_pin(GPIO_TypeDef* GPIOx, uint32_t pin);
 
 uint32_t gpio_read_pin(GPIO_TypeDef* GPIOx, uint32_t pin);
-void gpio_write_pin(GPIO_TypeDef* GPIOx, uint32_t pin, uint32_t value);
+STATUS_CODE gpio_write_pin(GPIO_TypeDef* GPIOx, uint32_t pin, uint32_t value);
 
 #endif // _GPIO_H

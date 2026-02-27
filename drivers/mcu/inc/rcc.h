@@ -1,5 +1,9 @@
 #include <stdint.h>
 #include "stm32f429.h"
+#include "status.h"
+
+#ifndef _RCC_H
+#define _RCC_H
 
 // RCC Peripheral:
 typedef struct {
@@ -42,3 +46,12 @@ typedef struct {
 
 #define RCC_AHB1ENR_GPIOAEN (0x00U)
 #define RCC_AHB1ENR_GPIOGEN (0x06U)
+
+STATUS_CODE RCC_Init(void);
+
+STATUS_CODE RCC_EnableGPIOx(char gpio_port);
+STATUS_CODE RCC_DisableGPIOx(char gpio_port);
+STATUS_CODE RCC_EnableI2Cx(uint8_t i2c_port);
+STATUS_CODE RCC_DisableI2Cx(uint8_t i2c_port);
+
+#endif // _RCC_H

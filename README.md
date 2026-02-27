@@ -1,6 +1,6 @@
 # stm32f429
 
-
+https://kleinembedded.com/stm32-without-cubeide-part-2-cmsis-make-and-clock-configuration/
 
 ## Getting started
 

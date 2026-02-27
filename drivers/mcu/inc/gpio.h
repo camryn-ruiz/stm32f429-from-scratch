@@ -64,10 +64,29 @@ typedef enum {
     GPIO_MODE_ANALOG = 0x03U,
 } GPIO_Mode;
 
+typedef enum {
+    AF0 = 0x00U,
+    AF1 = 0x01U,
+    AF2 = 0x02U,
+    AF3 = 0x03U,
+    AF4 = 0x04U,
+    AF5 = 0x05U,
+    AF6 = 0x06U,
+    AF7 = 0x07U,
+    AF8 = 0x08U,
+    AF9 = 0x09U,
+    AF10 = 0x0AU,
+    AF11 = 0x0BU,
+    AF12 = 0x0CU,
+    AF13 = 0x0DU,
+    AF14 = 0x0EU,
+    AF15 = 0x0FU,
+} AF;
+
 // GPIO Helper Fuinctions Prototypes:
 // TODO: Implement Status later for Error Handling in these functions
 STATUS_CODE gpio_init(void);
-STATUS_CODE gpio_set_mode(GPIO_TypeDef* GPIOx, uint8_t pin, uint8_t mode);
+STATUS_CODE gpio_set_mode(GPIO_TypeDef* GPIOx, uint8_t pin, GPIO_Mode mode);
 
 STATUS_CODE gpio_set_pin(GPIO_TypeDef* GPIOx, uint32_t pin);
 STATUS_CODE gpio_clear_pin(GPIO_TypeDef* GPIOx, uint32_t pin);
@@ -75,5 +94,6 @@ STATUS_CODE gpio_toggle_pin(GPIO_TypeDef* GPIOx, uint32_t pin);
 
 uint32_t gpio_read_pin(GPIO_TypeDef* GPIOx, uint32_t pin);
 STATUS_CODE gpio_write_pin(GPIO_TypeDef* GPIOx, uint32_t pin, uint32_t value);
+STATUS_CODE gpio_write_alternate(GPIO_TypeDef* GPIOx, uint32_t pin, AF alt);
 
 #endif // _GPIO_H

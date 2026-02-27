@@ -1,4 +1,5 @@
-COMPILER = arm-none-eabi-gcc
+COMPILER = /usr/bin/arm-none-eabi-gcc
+#COMPILER = arm-none-eabi-gcc
 PROGRAMMER = openocd
 PROGRAMMER_FLAGS = -f interface/stlink.cfg -f target/stm32f4x.cfg
 APPLICATION_CODE = application/*.c
@@ -11,7 +12,9 @@ ELF_FILE = $(OUT_DIR)/blink.elf
 OPT ?= -O0
 CFLAGS  = -mcpu=cortex-m4 -mthumb -nostdlib $(OPT)
 LDFLAGS = -T $(LINKER_SCRIPT) -Wl,--build-id=none
-INC_DIRS = -I drivers/mcu/inc -I drivers/status/inc
+INC_DIRS =	-I drivers/mcu/inc \
+			-I drivers/status/inc \
+			-I drivers/hd44780u/inc
 
 .PHONY: build flash clean
 

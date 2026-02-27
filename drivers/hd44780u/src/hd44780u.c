@@ -41,7 +41,9 @@ STATUS_CODE LCD_WriteString(const char* str) {
 }
 
 STATUS_CODE LCD_WriteByte(uint8_t data) {
-    
+    // Call I2C_Master_Transmit() to send the data byte to the LCD via I2C
+    // Send to PCF8574 I2C expander at address 0x??
+    // 
 
     return STATUS_OK;
 }

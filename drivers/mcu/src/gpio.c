@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include "gpio.h"
 
 STATUS_CODE gpio_init(void) {}

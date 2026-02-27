@@ -34,6 +34,6 @@ void main(void) {
             gpio_set_pin(GPIOG, GREEN_LED_PIN);
         }
         //GPIOG->BSRR = (RED_LED_MASK << 16) | GREEN_LED_MASK; // LEDs <R|G> : <OFF|ON>
-        //for (volatile uint32_t i = 0; i < 1000000; i++); // Delayl
+        //for (volatile uint32_t i = 0; i < 1000000; i++); // Delay
     }
 }

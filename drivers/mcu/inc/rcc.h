@@ -40,26 +40,20 @@ typedef struct {
     volatile uint32_t DCKCFGR;
 } RCC_TypeDef;
 
-enum SWS {
+typedef enum {
     SWS_HSI = 0,
     SWS_HSE = 1,
     SWS_PLL = 2,
     SWS_INVALID = 3
-};
+} SWS_TypeDef;
 
-enum CLOCK_DIVIDER {
+typedef enum {
     DIV_1 = 0,
     DIV_2 = 0x4,
     DIV_4 = 0x5,
     DIV_8 = 0x6,
     DIV_16 = 0x7
-};
-
-#define RCC_BASE (AHB1_BASE_ADDR + 0x3800)
-#define RCC ((RCC_TypeDef*) RCC_BASE)
-
-#define RCC_AHB1ENR_GPIOAEN (0x00U)
-#define RCC_AHB1ENR_GPIOGEN (0x06U)
+} CLOCK_DIVIDER_TypeDef;
 
 #define CLOCK_SPEED_100KHz 100000
 #define CLOCK_SPEED_400KHz 400000

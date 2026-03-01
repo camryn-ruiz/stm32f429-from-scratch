@@ -52,15 +52,6 @@ enum TransferDirection {
     I2C_READ = 1
 };
 
-#define I2C1_BASE (APB1_BASE_ADDR + 0x5400)
-#define I2C2_BASE (APB1_BASE_ADDR + 0x5800)
-#define I2C3_BASE (APB1_BASE_ADDR + 0x5C00)
-
-                                        // SDA | SCL | SMBA
-#define I2C1 ((I2C_TypeDef*) I2C1_BASE) // PB7 | PB6 | PB5
-#define I2C2 ((I2C_TypeDef*) I2C2_BASE) // PF0 | PF1 | PF2
-#define I2C3 ((I2C_TypeDef*) I2C3_BASE) // PC9 | PA8 | PA9
-
 STATUS_CODE I2C_Init(I2C_TypeDef* I2Cx, uint16_t mode, uint16_t duty_cycle, uint32_t clock_speed);
 STATUS_CODE I2C_ClockConfig(I2C_TypeDef* I2Cx, uint16_t mode, uint16_t duty_cycle, uint32_t clock_speed);
 STATUS_CODE I2C_Start(I2C_TypeDef* I2Cx);

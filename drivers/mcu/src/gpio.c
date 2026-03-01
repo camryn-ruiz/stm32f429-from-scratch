@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "gpio.h"
 
-STATUS_CODE gpio_init(GPIO_TypeDef* GPIOx, GPIO_InitPinConfig* InitStruct) {
+STATUS_CODE gpio_init(GPIO_TypeDef* GPIOx, GPIO_InitTypeDef* InitStruct) {
     if (InitStruct == NULL) {
         return STATUS_INVALID_PARAM; // Invalid configuration pointer
     }
@@ -13,9 +13,9 @@ STATUS_CODE gpio_init(GPIO_TypeDef* GPIOx, GPIO_InitPinConfig* InitStruct) {
     // TODO: Add speeds if needed in the future
     // Set Output Type (Push-Pull/Open-Drain)
     if (InitStruct->mode == GPIO_MODE_OUTPUT || InitStruct->mode == GPIO_MODE_ALTFN) {
-        if (InitStruct->pull == GPIO_PUSH_PULL) {
+        if (InitStruct->otype == GPIO_PUSH_PULL) {
             GPIOx->OTYPER &= ~(1U << InitStruct->pin); // Set to Push-Pull
-        } else if (InitStruct->pull == GPIO_OPEN_DRAIN) {
+        } else if (InitStruct->otype == GPIO_OPEN_DRAIN) {
             GPIOx->OTYPER |= (1U << InitStruct->pin); // Set to Open-Drain
         }
     }
@@ -36,7 +36,7 @@ STATUS_CODE gpio_init(GPIO_TypeDef* GPIOx, GPIO_InitPinConfig* InitStruct) {
     return STATUS_OK;
 }
 
-STATUS_CODE gpio_set_mode(GPIO_TypeDef* GPIOx, GPIO_Pin pin, GPIO_Mode mode) {
+STATUS_CODE gpio_set_mode(GPIO_TypeDef* GPIOx, GPIO_PinTypeDef pin, GPIO_ModeTypeDef mode) {
     // Clear the 2 bits corresponding to the pin in the MODER register
     GPIOx->MODER &= ~(0x03U << (2 * pin)); // Clear bits for the specified pin
 
@@ -46,36 +46,36 @@ STATUS_CODE gpio_set_mode(GPIO_TypeDef* GPIOx, GPIO_Pin pin, GPIO_Mode mode) {
     return STATUS_OK;
 }
 
-STATUS_CODE gpio_set_pin(GPIO_TypeDef* GPIOx, GPIO_Pin pin) {
+STATUS_CODE gpio_set_pin(GPIO_TypeDef* GPIOx, GPIO_PinTypeDef pin) {
     GPIOx->ODR |= (1U << pin); // Set the bit corresponding to the pin in the ODR register
 
     return STATUS_OK;
 }
 
-STATUS_CODE gpio_clear_pin(GPIO_TypeDef* GPIOx, GPIO_Pin pin) {
+STATUS_CODE gpio_clear_pin(GPIO_TypeDef* GPIOx, GPIO_PinTypeDef pin) {
     GPIOx->ODR &= ~(1U << pin); // Clear the bit corresponding to the pin in the ODR register
 
     return STATUS_OK;
 }
 
-STATUS_CODE gpio_toggle_pin(GPIO_TypeDef* GPIOx, GPIO_Pin pin) {
+STATUS_CODE gpio_toggle_pin(GPIO_TypeDef* GPIOx, GPIO_PinTypeDef pin) {
     GPIOx->ODR ^= (1U << pin); // Toggle the bit corresponding to the pin in the ODR register
 
     return STATUS_OK;
 }
 
-uint32_t gpio_read_pin(GPIO_TypeDef* GPIOx, GPIO_Pin pin) {
+uint32_t gpio_read_pin(GPIO_TypeDef* GPIOx, GPIO_PinTypeDef pin) {
     uint32_t val = GPIOx->IDR & (1U << pin); // Read the bit corresponding to the pin in the IDR register
     return val;
 }
 
-STATUS_CODE gpio_write_pin(GPIO_TypeDef* GPIOx, GPIO_Pin pin, uint32_t value) {
+STATUS_CODE gpio_write_pin(GPIO_TypeDef* GPIOx, GPIO_PinTypeDef pin, uint32_t value) {
     GPIOx->ODR = (GPIOx->ODR & ~(1U << pin)) | ((value & 0x01U) << pin); // Write the value to the bit corresponding to the pin in the ODR register
 
     return STATUS_OK;
 }
 
-STATUS_CODE gpio_write_alternate(GPIO_TypeDef* GPIOx, GPIO_Pin pin, GPIO_ALTF alt) {
+STATUS_CODE gpio_write_alternate(GPIO_TypeDef* GPIOx, GPIO_PinTypeDef pin, GPIO_ALTFTypeDef alt) {
     // Clear the 4 bits corresponding to the pin in the AFRL or AFRH register
     if (pin < 8) {
         GPIOx->AFRL &= ~(0xF0U << (4 * pin)); // Clear bits for the specified pin in AFRL

@@ -57,6 +57,13 @@ typedef struct {
 #define GPIOJ ((GPIO_TypeDef*) GPIOJ_BASE_ADDR)
 #define GPIOK ((GPIO_TypeDef*) GPIOK_BASE_ADDR)
 
+// STM32F429 Eval Board on Board LEDs:
+#define USER_BUTTON_PIN 0U
+#define GREEN_LED_PIN 13U
+#define RED_LED_PIN 14U
+#define GREEN_LED_MASK (1U << GREEN_LED_PIN)
+#define RED_LED_MASK (1U << RED_LED_PIN)
+
 typedef enum {
     GPIO_MODE_INPUT = 0x00U,
     GPIO_MODE_OUTPUT = 0x01U,
@@ -65,35 +72,82 @@ typedef enum {
 } GPIO_Mode;
 
 typedef enum {
-    AF0 = 0x00U,
-    AF1 = 0x01U,
-    AF2 = 0x02U,
-    AF3 = 0x03U,
-    AF4 = 0x04U,
-    AF5 = 0x05U,
-    AF6 = 0x06U,
-    AF7 = 0x07U,
-    AF8 = 0x08U,
-    AF9 = 0x09U,
-    AF10 = 0x0AU,
-    AF11 = 0x0BU,
-    AF12 = 0x0CU,
-    AF13 = 0x0DU,
-    AF14 = 0x0EU,
-    AF15 = 0x0FU,
-} AF;
+    GPIO_PULL_NONE = 0x00U,
+    GPIO_PUSH_PULL = 0x01U,
+    GPIO_OPEN_DRAIN = 0x02U,
+} GPIO_OType;
+
+typedef enum {
+    GPIO_SPEED_LOW = 0x00U,
+    GPIO_SPEED_MEDIUM = 0x01U,
+    GPIO_SPEED_FAST = 0x02U,
+    GPIO_SPEED_HIGH = 0x03U,
+} GPIO_Speed;
+
+typedef enum {
+    GPIO_PIN_0 = 0x00U,
+    GPIO_PIN_1 = 0x01U,
+    GPIO_PIN_2 = 0x02U,
+    GPIO_PIN_3 = 0x03U,
+    GPIO_PIN_4 = 0x04U,
+    GPIO_PIN_5 = 0x05U,
+    GPIO_PIN_6 = 0x06U,
+    GPIO_PIN_7 = 0x07U,
+    GPIO_PIN_8 = 0x08U,
+    GPIO_PIN_9 = 0x09U,
+    GPIO_PIN_10 = 0x0AU,
+    GPIO_PIN_11 = 0x0BU,
+    GPIO_PIN_12 = 0x0CU,
+    GPIO_PIN_13 = 0x0DU,
+    GPIO_PIN_14 = 0x0EU,
+    GPIO_PIN_15 = 0x0FU,
+} GPIO_Pin;
+
+typedef enum {
+    GPIO_NONE = 0x00U,
+    GPIO_PULLUP = 0x01U,
+    GPIO_PULLDOWN = 0x02U,
+    GPIO_RESERVED = 0x03U
+} GPIO_PUPD;
+
+typedef enum {
+    GPIO_AF0 = 0x00U,
+    GPIO_AF1 = 0x01U,
+    GPIO_AF2 = 0x02U,
+    GPIO_AF3 = 0x03U,
+    GPIO_AF4 = 0x04U,
+    GPIO_AF5 = 0x05U,
+    GPIO_AF6 = 0x06U,
+    GPIO_AF7 = 0x07U,
+    GPIO_AF8 = 0x08U,
+    GPIO_AF9 = 0x09U,
+    GPIO_AF10 = 0x0AU,
+    GPIO_AF11 = 0x0BU,
+    GPIO_AF12 = 0x0CU,
+    GPIO_AF13 = 0x0DU,
+    GPIO_AF14 = 0x0EU,
+    GPIO_AF15 = 0x0FU,
+} GPIO_ALTF;
+
+typedef struct {
+    GPIO_Pin pin;
+    GPIO_Mode mode;
+    GPIO_OType otype;
+    GPIO_Speed speed;
+    GPIO_PUPD pull;
+    GPIO_ALTF alternate_function;
+} GPIO_InitPinConfig;
 
 // GPIO Helper Fuinctions Prototypes:
 // TODO: Implement Status later for Error Handling in these functions
-STATUS_CODE gpio_init(void);
-STATUS_CODE gpio_set_mode(GPIO_TypeDef* GPIOx, uint8_t pin, GPIO_Mode mode);
+STATUS_CODE gpio_init(GPIO_TypeDef* GPIOx, GPIO_InitPinConfig* InitStruct);
+STATUS_CODE gpio_set_mode(GPIO_TypeDef* GPIOx, GPIO_Pin pin, GPIO_Mode mode);
 
-STATUS_CODE gpio_set_pin(GPIO_TypeDef* GPIOx, uint32_t pin);
-STATUS_CODE gpio_clear_pin(GPIO_TypeDef* GPIOx, uint32_t pin);
-STATUS_CODE gpio_toggle_pin(GPIO_TypeDef* GPIOx, uint32_t pin);
-
-uint32_t gpio_read_pin(GPIO_TypeDef* GPIOx, uint32_t pin);
-STATUS_CODE gpio_write_pin(GPIO_TypeDef* GPIOx, uint32_t pin, uint32_t value);
-STATUS_CODE gpio_write_alternate(GPIO_TypeDef* GPIOx, uint32_t pin, AF alt);
+STATUS_CODE gpio_set_pin(GPIO_TypeDef* GPIOx, GPIO_Pin pin);
+STATUS_CODE gpio_clear_pin(GPIO_TypeDef* GPIOx, GPIO_Pin pin);
+STATUS_CODE gpio_toggle_pin(GPIO_TypeDef* GPIOx, GPIO_Pin pin);
+uint32_t gpio_read_pin(GPIO_TypeDef* GPIOx, GPIO_Pin pin);
+STATUS_CODE gpio_write_pin(GPIO_TypeDef* GPIOx, GPIO_Pin pin, uint32_t value);
+STATUS_CODE gpio_write_alternate(GPIO_TypeDef* GPIOx, GPIO_Pin pin, GPIO_ALTF alt);
 
 #endif // _GPIO_H

@@ -73,4 +73,6 @@ STATUS_CODE RCC_DisableI2Cx(uint8_t i2c_port);
 uint32_t SYSCLK_GetFreq(void);
 uint32_t I2C_GetPCLK1Freq(void);
 
+void delay_ms(uint32_t ms);
+
 #endif // _RCC_H

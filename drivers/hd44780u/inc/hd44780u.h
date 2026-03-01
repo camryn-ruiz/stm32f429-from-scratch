@@ -1,5 +1,7 @@
 #include <stdint.h>
 #include "status.h"
+#include "pcf8574a.h"
+#include "i2c.h"
 
 #ifndef _HD44780U_H
 #define _HD44780U_H
@@ -41,15 +43,14 @@
 #define HD44780U_FUNCTION_DATA_LENGTH_4BIT 0x00
 #define HD44780U_FUNCTION_DATA_LENGTH_8BIT 0x10
 
-STATUS_CODE LCD_Init(void);
-STATUS_CODE LCD_Clear(void);
-STATUS_CODE LCD_ReturnHome(void);
-STATUS_CODE LCD_FunctionSet(uint8_t flags);
-STATUS_CODE LCD_DisplayControl(uint8_t flags);
-STATUS_CODE LCD_EntryModeSet(uint8_t flags);
-STATUS_CODE LCD_SendCommand(uint8_t cmd);
-STATUS_CODE LCD_SendData(uint8_t data);
-STATUS_CODE LCD_WriteString(const char* str);
-STATUS_CODE LCD_WriteByte(uint8_t data);
+STATUS_CODE LCD_Init(I2C_TypeDef* I2Cx);
+STATUS_CODE LCD_Clear(I2C_TypeDef* I2Cx);
+STATUS_CODE LCD_ReturnHome(I2C_TypeDef* I2Cx);
+STATUS_CODE LCD_FunctionSet(I2C_TypeDef* I2Cx, uint8_t flags);
+STATUS_CODE LCD_DisplayControl(I2C_TypeDef* I2Cx, uint8_t flags);
+STATUS_CODE LCD_EntryModeSet(I2C_TypeDef* I2Cx, uint8_t flags);
+STATUS_CODE LCD_SendCommand(I2C_TypeDef* I2Cx, uint8_t cmd);
+STATUS_CODE LCD_SendData(I2C_TypeDef* I2Cx, uint8_t data);
+STATUS_CODE LCD_WriteString(I2C_TypeDef* I2Cx, const char* str);
 
 #endif // _HD44780U_H

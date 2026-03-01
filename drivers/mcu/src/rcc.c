@@ -23,20 +23,40 @@ STATUS_CODE RCC_DisableGPIOx(char port)
 }
 
 STATUS_CODE RCC_EnableI2Cx(uint8_t i2c_port) {
-    if (i2c_port < 1 || i2c_port > 3) {
-        return STATUS_INVALID_PARAM; // Invalid I2C port, do nothing
+    switch(i2c_port)
+    {
+        case 1:
+            RCC->APB1ENR |= (1U << 21);
+            break;
+        case 2:
+            RCC->APB1ENR |= (1U << 22);
+            break;
+        case 3:
+            RCC->APB1ENR |= (1U << 23);
+            break;
+        default:
+            return STATUS_INVALID_PARAM; // Invalid I2C port, do nothing
     }
 
-    RCC->APB1ENR |= (1U << (i2c_port + 21)); // Enable the clock for the specified I2C port
     return STATUS_OK;
 }
 
 STATUS_CODE RCC_DisableI2Cx(uint8_t i2c_port) {
-    if (i2c_port < 1 || i2c_port > 3) {
-        return STATUS_INVALID_PARAM; // Invalid I2C port, do nothing
+    switch(i2c_port)
+    {
+        case 1:
+            RCC->APB1ENR &= ~(1U << 21);
+            break;
+        case 2:
+            RCC->APB1ENR &= ~(1U << 22);
+            break;
+        case 3:
+            RCC->APB1ENR &= ~(1U << 23);
+            break;
+        default:
+            return STATUS_INVALID_PARAM; // Invalid I2C port, do nothing
     }
 
-    RCC->APB1ENR &= ~(1U << (i2c_port + 21)); // Disable the clock for the specified I2C port
     return STATUS_OK;
 }
 
@@ -73,4 +93,11 @@ uint32_t I2C_GetPCLK1Freq(void) {
     // APB2 = 90 MHz (PPRE2 = 2, divide by 2)
     
     return SYSCLK / (1 << apb1_divider); // Calculate APB1 clock frequency
+}
+
+void delay_ms(uint32_t ms) {
+    volatile uint32_t count = ms * SYSCLK_GetFreq() / 1000; // Approximate number of iterations for 1 ms delay
+    while (count--) {
+        __asm__("nop"); // Prevent optimization of empty loop
+    }
 }

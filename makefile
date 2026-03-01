@@ -14,7 +14,8 @@ CFLAGS  = -mcpu=cortex-m4 -mthumb -nostdlib $(OPT)
 LDFLAGS = -T $(LINKER_SCRIPT) -Wl,--build-id=none
 INC_DIRS =	-I drivers/mcu/inc \
 			-I drivers/status/inc \
-			-I drivers/hd44780u/inc
+			-I drivers/hd44780u/inc \
+			-I drivers/pcf8574a/inc \
 
 .PHONY: build flash clean
 

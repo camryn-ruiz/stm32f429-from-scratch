@@ -52,5 +52,6 @@ STATUS_CODE LCD_EntryModeSet(I2C_TypeDef* I2Cx, uint8_t flags);
 STATUS_CODE LCD_SendCommand(I2C_TypeDef* I2Cx, uint8_t cmd);
 STATUS_CODE LCD_SendData(I2C_TypeDef* I2Cx, uint8_t data);
 STATUS_CODE LCD_WriteString(I2C_TypeDef* I2Cx, const char* str);
+STATUS_CODE LCD_SetCursor(I2C_TypeDef* I2Cx, uint8_t row, uint8_t col);
 
 #endif // _HD44780U_H

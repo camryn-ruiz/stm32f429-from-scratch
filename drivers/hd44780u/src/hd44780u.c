@@ -60,6 +60,6 @@ STATUS_CODE LCD_WriteString(I2C_TypeDef* I2Cx, const char* str) {
 }
 
 STATUS_CODE LCD_SetCursor(I2C_TypeDef* I2Cx, uint8_t row, uint8_t col) {
-    uint8_t address = (row == 0) ? col : (0x40 + col); // Calculate DDRAM address based on row and column
+    uint8_t address = (row == 0) ? col : (0x40 + col); // Calculate DDRAM address based on row and column (if row == 0 use col, else add 0x40 for second line)
     return LCD_SendCommand(I2Cx, HD44780U_CMD_SET_DDRAM_ADDR | address); // Set DDRAM address to position cursor
 }

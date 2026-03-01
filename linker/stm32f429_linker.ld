@@ -63,9 +63,11 @@ SECTIONS
         _sbss = .;
 
         *(.bss)
+        *(COMMON)
 
         . = ALIGN(4);
         _ebss = .;
+        _end = .;
     } >SRAM1
 
     /* Remove unecessary sections for bare-metal firmware */

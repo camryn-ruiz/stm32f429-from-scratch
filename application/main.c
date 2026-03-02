@@ -31,32 +31,36 @@ void main(void) {
     gpio_init(GPIOB, &gpioI2C1SDA); // Initialize PB7 for I2C1 SDA
     gpio_init(GPIOB, &gpioDIP1); // Initialize PD3 for DIP Switch 1 Input
 
+    RCC_EnableI2Cx(2); // Enable I2C2 Clock for Temperature Sensor
+    GPIO_InitTypeDef gpioI2C2SCL = {GPIO_PIN_10, GPIO_MODE_ALTFN, GPIO_OPEN_DRAIN, GPIO_SPEED_FAST, GPIO_PULLUP, GPIO_AF4}; // PB10 as I2C2 SCL
+    GPIO_InitTypeDef gpioI2C2SDA = {GPIO_PIN_11, GPIO_MODE_ALTFN, GPIO_OPEN_DRAIN, GPIO_SPEED_FAST, GPIO_PULLUP, GPIO_AF4}; // PB11 as I2C2 SDA
+    gpio_init(GPIOB, &gpioI2C2SCL); // Initialize PB10 for I2C2 SCL
+    gpio_init(GPIOB, &gpioI2C2SDA); // Initialize PB11 for I2C2 SDA
+
     //STATUS_CODE status = STATUS_OK;
     PCF8574A_Init(I2C1); // Initialize the PCF8574A I/O Expander for LCD Control
     LCD_Init(I2C1); // Initialize the LCD Display
     LCD_Clear(I2C1); // Clear the LCD for the main loop messages
+    TCN75A_Init(I2C2); // Initialize the TCN75A Temperature Sensor
 
     int toggle = !gpio_read_pin(GPIOB, GPIO_PIN_3); // Variable to track button state for LCD updates
-
+    float temperature = 0.0f; // Variable to store temperature reading from TCN75A sensor
+    STATUS_CODE status = STATUS_OK;
+    char tempStr[16]; // Buffer to hold formatted temperature string for LCD display
+    LCD_WriteString(I2C1, "Temp: "); // Initial message on LCD
     while (1) {
-        if (gpio_read_pin(GPIOB, GPIO_PIN_3)) {
-            gpio_set_pin(GPIOG, RED_LED_PIN);
-            gpio_clear_pin(GPIOG, GREEN_LED_PIN);
-            if (toggle == 0) {
-                LCD_Clear(I2C1); // Clear LCD before writing new message
-                delay_ms(2); // Short delay to ensure LCD is cleared before writing new messages
-                LCD_WriteString(I2C1, "Button Pressed!"); // Update LCD when button is pressed
-                toggle = 1;
-            }
-        } else {
-            gpio_clear_pin(GPIOG, RED_LED_PIN);
-            gpio_set_pin(GPIOG, GREEN_LED_PIN);
-            if (toggle == 1) {
-                LCD_Clear(I2C1); // Clear LCD before writing new message
-                delay_ms(2); // Short delay to ensure LCD is cleared before writing new messages
-                LCD_WriteString(I2C1, "Button Released!"); // Update LCD when button is released
-                toggle = 0;
-            }
+        status = TCN75A_ReadTemperature(I2C2, &temperature); // Read temperature from TCN75A sensor at address 0x48
+        LCD_SetCursor(I2C1, 0, 6); // Set cursor to the position after the first print (only overwrite the temperature value, not the "Temp: " label)
+        if (gpio_read_pin(GPIOB, GPIO_PIN_3)) { // Check if DIP Switch 1 is ON (active high)
+            snprintf(tempStr, sizeof(tempStr), "%.2f C", temperature); // Format temperature reading into string with 2 decimal places
+            LCD_WriteString(I2C1, tempStr); // Write Status OK
+            delay_ms(1000); // Delay to allow user to read status message before writing temperature value
+        }
+        else {
+
+            snprintf(tempStr, sizeof(tempStr), "%.2f F", temperature * (9.0f/5.0f) + 32.0f); // Format temperature reading into string with 2 decimal places
+            LCD_WriteString(I2C1, tempStr); // Write Status Not OK
+            delay_ms(1000); // Delay to allow user to read error message before next attempt
         }
     }
 }

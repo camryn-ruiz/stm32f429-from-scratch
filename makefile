@@ -8,14 +8,16 @@ LINKER_SCRIPT = linker/stm32f429_linker.ld
 STARTUP_SCRIPT = startup/stm32f429_startup.c
 SRC_CODE = $(APPLICATION_CODE) $(DRIVERS) $(STARTUP_SCRIPT)
 OUT_DIR = build
-ELF_FILE = $(OUT_DIR)/blink.elf
+ELF_FILE = $(OUT_DIR)/stm32f429_firmware.elf
 OPT ?= -O0
 CFLAGS  = -mcpu=cortex-m4 -mthumb -nostdlib $(OPT)
 LDFLAGS = -T $(LINKER_SCRIPT) -Wl,--build-id=none
+LDLIBS = -lc -lnosys -lgcc
 INC_DIRS =	-I drivers/mcu/inc \
 			-I drivers/status/inc \
 			-I drivers/hd44780u/inc \
 			-I drivers/pcf8574a/inc \
+			-I drivers/tcn75a/inc \
 
 .PHONY: build flash clean
 
@@ -23,7 +25,7 @@ build:
 	@mkdir -p $(OUT_DIR)
 	@rm -f $(ELF_FILE)
 	@echo "Compiling application..."
-	$(COMPILER) $(SRC_CODE) $(CFLAGS) $(LDFLAGS) -o $(ELF_FILE) $(INC_DIRS)
+	$(COMPILER) $(SRC_CODE) $(CFLAGS) $(LDFLAGS) -o $(ELF_FILE) $(INC_DIRS) $(LDLIBS)
 
 flash:
 	@echo "======================================"

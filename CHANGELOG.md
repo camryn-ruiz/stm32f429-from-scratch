@@ -4,7 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
-## [Unreleased]
+## [0.1.1]
+
+### Added
+- TCN75 Driver basic functionality
+- basic newlib syscall stubs to be able to use `snprintf` to print temp values to the LCD
+
+### Changed
+- Move linker libraries into LDLIBS
 
 ## [0.1.0] - 2026-02-27
 ### Added

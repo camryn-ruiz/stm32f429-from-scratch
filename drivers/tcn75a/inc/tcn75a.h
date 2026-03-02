@@ -10,7 +10,7 @@
 #ifndef _TCN75A_H
 #define _TCN75A_H
 
-#define TCN75A_I2C_ADDRESS 0x48 // Base I2C address for TCN75A (A0, A1, A2 all tied to GND defaults to 0x48)
+#define TCN75A_I2C_ADDRESS 0x48U // Base I2C address for TCN75A (A0, A1, A2 all tied to GND defaults to 0x48)
 
 typedef enum {
     FAULT_QUEUE_1 = 0x00U,

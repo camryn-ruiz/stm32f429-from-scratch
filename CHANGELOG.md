@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [0.1.2]
+
+### Added
+- delay.c/.h where the delay functions will live
+- Some USART related defines/files
+- Added some info at the top of sensor drivers to give background
+
+### Changed
+- Location of the Register Typedefs `RCC_TypeDef`, `I2C_TypeDef`, `GPIO_TypeDef` moved to `stm32f429.h`
+- `RCC_EnableGPIOx`, `RCC_EnableI2Cx`, and respective disable functions logic changed so you can pass in the I2Cx/GPIOx instead of different values
+- `gpio_init` now will enable the clock for the passed in gpio register
+
+### Fixed
+- Include Headers
+- Include/Redundant Includes
 ## [0.1.1]
 
 ### Added

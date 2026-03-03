@@ -1,5 +1,10 @@
-#include <stdint.h>
+//! @file pcf8574a.c
+//! @brief PCF8574A I2C I/O Expander Driver Source File
+//! @details
+//! > See Header File for details.
+
 #include "pcf8574a.h"
+#include "delay.h"
 
 STATUS_CODE PCF8574A_Init(I2C_TypeDef* I2Cx) {
     return I2C_Init(I2Cx, SLOW_MODE, DUTY, 100000); // Initialize I2C in standard mode (100 kHz)

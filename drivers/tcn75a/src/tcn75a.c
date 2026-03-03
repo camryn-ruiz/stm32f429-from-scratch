@@ -1,3 +1,8 @@
+//! @file tcn75a.c
+//! @brief TCN75A Temperature Sensor Driver Source File
+//! @details
+//! > See Header File for details.
+
 #include "tcn75a.h"
 
 STATUS_CODE TCN75A_Init(I2C_TypeDef* I2Cx) {

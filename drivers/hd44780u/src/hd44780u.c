@@ -1,4 +1,11 @@
+//! @file hd44780u.c
+//! @brief HD44780U LCD Controller Driver Source File
+//! @details
+//! > See Header File for details.
+
 #include "hd44780u.h"
+#include "pcf8574a.h"
+#include "delay.h"
 
 STATUS_CODE LCD_Init(I2C_TypeDef* I2Cx) {
     delay_ms(50);

@@ -1,11 +1,9 @@
-#include <stdint.h>
-#include "stm32f429.h"
 #include "i2c.h"
 #include "rcc.h"
 
 STATUS_CODE I2C_Init(I2C_TypeDef* I2Cx, uint16_t mode, uint16_t duty_cycle, uint32_t clock_speed) {
     // Enable I2C peripheral clock via RCC
-    RCC_EnableI2Cx(I2Cx == I2C1 ? 1 : (I2Cx == I2C2 ? 2 : 3));
+    RCC_EnableI2Cx(I2Cx);
 
     // Disable peripheral before configuration (clear PE bit in CR1)
     I2Cx->CR1 &= ~PE;

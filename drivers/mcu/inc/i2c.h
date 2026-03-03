@@ -1,8 +1,9 @@
-#include <stdint.h>
-#include "status.h"
-
 #ifndef _I2C_H
 #define _I2C_H
+
+#include <stdint.h>
+#include "status.h"
+#include "stm32f429.h"
 
 #define TIMEOUT (100000U) // Arbitrary timeout value for I2C operations
 
@@ -33,19 +34,6 @@
  * 1: T_low/T_high = 16/9
  */
 #define DUTY      (1U << 14) 
-
-typedef struct {
-    volatile uint32_t CR1;
-    volatile uint32_t CR2;
-    volatile uint32_t OAR1;
-    volatile uint32_t OAR2;
-    volatile uint32_t DR;
-    volatile uint32_t SR1;
-    volatile uint32_t SR2;
-    volatile uint32_t CCR;
-    volatile uint32_t TRISE;
-    volatile uint32_t FLTR;
-} I2C_TypeDef;
 
 enum TransferDirection {
     I2C_WRITE = 0,

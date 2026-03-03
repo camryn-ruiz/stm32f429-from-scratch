@@ -1,14 +1,17 @@
-// This Driver is for the TCN75A Temperature Sensor, which is a simple I2C-based temperature sensor with a 9-bit to 12-bit resolution and a 
-// temperature range of -55°C to +125°C. It has a fixed I2C address of 0x48 (when A0-A2 pins are tied to GND) and supports both read and 
-// write operations for configuration and temperature data retrieval.
+//! @file tcn75a.h
+//! @brief TCN75A Temperature Sensor Driver Header File
+//! @details
+//! > This Driver is for the TCN75A Temperature Sensor, which is a simple I2C-based temperature sensor with a 9-bit to 12-bit resolution and a 
+//! > temperature range of -55°C to +125°C. It has a fixed I2C address of 0x48 (when A0-A2 pins are tied to GND) and supports both read and 
+//! > write operations for configuration and temperature data retrieval.
 
-// Application is used on the PMOD TMP3 breakout board
-
-#include <stdint.h>
-#include "i2c.h"
+//! > Application is used on the PMOD TMP3 breakout board
 
 #ifndef _TCN75A_H
 #define _TCN75A_H
+
+#include <stdint.h>
+#include "i2c.h"
 
 #define TCN75A_I2C_ADDRESS 0x48U // Base I2C address for TCN75A (A0, A1, A2 all tied to GND defaults to 0x48)
 

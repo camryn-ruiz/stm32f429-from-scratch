@@ -1,22 +1,9 @@
-#include <stdint.h>
-#include "status.h"
-
 #ifndef _GPIO_H
 #define _GPIO_H
 
-// GPIO Peripheral Register Offsets:
-typedef struct {
-    volatile uint32_t MODER;    // 0x00
-    volatile uint32_t OTYPER;   // 0x04
-    volatile uint32_t OSPEEDR;  // 0x08
-    volatile uint32_t PUPDR;    // 0x0C
-    volatile uint32_t IDR;      // 0x10
-    volatile uint32_t ODR;      // 0x14
-    volatile uint32_t BSRR;     // 0x18
-    volatile uint32_t LCKR;     // 0x1C
-    volatile uint32_t AFRL;     // 0x20
-    volatile uint32_t AFRH;     // 0x24
-} GPIO_TypeDef;
+#include <stdint.h>
+#include "status.h"
+#include "stm32f429.h"
 
 // STM32F429 Eval Board on Board LEDs:
 #define USER_BUTTON_PIN 0U
@@ -36,7 +23,7 @@ typedef enum {
     GPIO_PULL_NONE  = 0x00U,
     GPIO_PUSH_PULL  = 0x01U,
     GPIO_OPEN_DRAIN = 0x02U,
-} GPIO_OTypeTypeDef;
+} GPIO_OType_TypeDef;
 
 typedef enum {
     GPIO_SPEED_LOW    = 0x00U,
@@ -94,7 +81,7 @@ typedef enum {
 typedef struct {
     GPIO_PinTypeDef pin;
     GPIO_ModeTypeDef mode;
-    GPIO_OTypeTypeDef otype;
+    GPIO_OType_TypeDef otype;
     GPIO_SpeedTypeDef speed;
     GPIO_PUPDTypeDef pull;
     GPIO_ALTFTypeDef alternate_function;
@@ -102,6 +89,7 @@ typedef struct {
 
 // GPIO Helper Fuinctions Prototypes:
 // TODO: Implement Status later for Error Handling in these functions
+STATUS_CODE gpio_clock_enable(GPIO_TypeDef* GPIOx);
 STATUS_CODE gpio_init(GPIO_TypeDef* GPIOx, GPIO_InitTypeDef* InitStruct);
 STATUS_CODE gpio_set_mode(GPIO_TypeDef* GPIOx, GPIO_PinTypeDef pin, GPIO_ModeTypeDef mode);
 STATUS_CODE gpio_set_pin(GPIO_TypeDef* GPIOx, GPIO_PinTypeDef pin);

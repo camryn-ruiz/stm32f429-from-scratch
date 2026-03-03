@@ -10,4 +10,6 @@ typedef enum {
     STATUS_TIMEOUT = 0x03U
 } STATUS_CODE;
 
+const char* StatusCodeToString(STATUS_CODE status);
+
 #endif // _STATUS_H

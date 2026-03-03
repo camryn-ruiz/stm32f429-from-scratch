@@ -1,10 +1,16 @@
-#include <stdint.h>
-#include "status.h"
-#include "pcf8574a.h"
-#include "i2c.h"
+//! @file hd44780u.h
+//! @brief HD44780U LCD Controller Driver Header File
+//! @details
+//! > This Driver is for the HD44780U LCD Controller, which is a widely used character LCD controller with a 5x8 or 5x10 dot matrix for each character.
+//! > It supports both 4-bit and 8-bit data bus modes and provides various display control options such as cursor on/off, blink on/off, and display on/off.
+//! > The LCD is controlled via an I2C-based PCF8574A I/O expander, which allows for communication with the LCD using only 2 I2C lines (SCL and SDA) and 
+//! > provides 8 GPIO pins to control the LCD's RS, RW, E, and data lines (D4-D7 in 4-bit mode).
 
 #ifndef _HD44780U_H
 #define _HD44780U_H
+
+#include <stdint.h>
+#include "i2c.h"
 
 // HD44780U Command Instructions:
 #define HD44780U_CMD_CLEAR_DISPLAY       0x01

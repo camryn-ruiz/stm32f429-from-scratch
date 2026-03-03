@@ -1,12 +1,14 @@
-#include <stdint.h>
 #include <stdio.h>
 #include "gpio.h"
+#include "rcc.h"
 
 STATUS_CODE gpio_init(GPIO_TypeDef* GPIOx, GPIO_InitTypeDef* InitStruct) {
     if (InitStruct == NULL) {
         return STATUS_INVALID_PARAM; // Invalid configuration pointer
     }
 
+    RCC_EnableGPIOx(GPIOx); // Ensure the GPIO port clock is enabled before configuration
+    
     // Set the mode for the specified pin
     gpio_set_mode(GPIOx, InitStruct->pin, InitStruct->mode);
 

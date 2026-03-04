@@ -7,7 +7,7 @@
 
 STATUS_CODE TCN75A_Init(I2C_TypeDef* I2Cx) {
     // Initialize the I2C peripheral for communication with the TCN75A
-    STATUS_CODE status = I2C_Init(I2Cx, SLOW_MODE, DUTY, 100000); // Initialize I2C in standard mode (100 kHz)
+    STATUS_CODE status = I2C_Init(I2Cx, I2C_SLOW_MODE, I2C_DUTY, 100000); // Initialize I2C in standard mode (100 kHz)
     if (status != STATUS_OK) {
         return status; // Failed to initialize I2C
     }

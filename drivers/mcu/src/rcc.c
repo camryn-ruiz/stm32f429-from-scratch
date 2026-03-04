@@ -51,6 +51,60 @@ STATUS_CODE RCC_DisableI2Cx(I2C_TypeDef* I2Cx) {
     return STATUS_OK;
 }
 
+STATUS_CODE RCC_EnableUSARTx(USART_TypeDef* USARTx) {
+    if (USARTx == USART1) RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
+    else if (USARTx == USART2) RCC->APB1ENR |= RCC_APB1ENR_USART2EN;
+    else if (USARTx == USART3) RCC->APB1ENR |= RCC_APB1ENR_USART3EN;
+    else if (USARTx == UART4)  RCC->APB1ENR |= RCC_APB1ENR_UART4EN;
+    else if (USARTx == UART5)  RCC->APB1ENR |= RCC_APB1ENR_UART5EN;
+    else if (USARTx == USART6) RCC->APB2ENR |= RCC_APB2ENR_USART6EN;
+    else return STATUS_INVALID_PARAM; // Invalid USART port, do nothing
+    return STATUS_OK;
+}
+
+STATUS_CODE RCC_DisableUSARTx(USART_TypeDef* USARTx) {
+    if (USARTx == USART1) RCC->APB2ENR &= ~RCC_APB2ENR_USART1EN;
+    else if (USARTx == USART2) RCC->APB1ENR &= ~RCC_APB1ENR_USART2EN;
+    else if (USARTx == USART3) RCC->APB1ENR &= ~RCC_APB1ENR_USART3EN;
+    else if (USARTx == UART4)  RCC->APB1ENR &= ~RCC_APB1ENR_UART4EN;
+    else if (USARTx == UART5)  RCC->APB1ENR &= ~RCC_APB1ENR_UART5EN;
+    else if (USARTx == USART6) RCC->APB2ENR &= ~RCC_APB2ENR_USART6EN;
+    else return STATUS_INVALID_PARAM; // Invalid USART port, do nothing
+    return STATUS_OK;
+}
+
+STATUS_CODE SYSCLK_Config(uint8_t clock_source) {
+    RCC->CFGR &= ~RCC_CFGR_SW; // Clear the SW Bits
+    switch (clock_source) {
+        case SWS_HSI:
+            RCC->CR |= RCC_CR_HSION;
+            while(!(RCC->CR & RCC_CR_HSIRDY)); 
+            RCC->CFGR |= RCC_CFGR_SW_HSI; // Set HSI as Clock Source
+            break;
+        case SWS_HSE:
+            RCC->CR |= RCC_CR_HSEON;
+            while(!(RCC->CR & RCC_CR_HSERDY)); 
+            RCC->CFGR |= RCC_CFGR_SW_HSE; // Set HSE as Clock Source
+            break;
+        case SWS_PLL:
+            RCC->CR |= RCC_CR_PLLON;
+            while(!(RCC->CR & RCC_CR_PLLRDY)); 
+            RCC->CFGR |= RCC_CFGR_SW_PLL; // Set PLL as Clock Source
+            break;
+        default:
+            return STATUS_INVALID_PARAM;
+    }
+
+    // Verify the clock source switch
+    for (uint32_t timeout = 10000; timeout > 0; timeout--) {
+        if (((RCC->CFGR >> 2) & 0x3) == clock_source) {
+            return STATUS_OK; // Clock source switch successful
+        }
+    }
+
+    return STATUS_TIMEOUT;
+}
+
 uint32_t SYSCLK_GetFreq(void) {
     uint32_t sysclk_source = (RCC->CFGR >> 2) & 0x3; // SWS bits
     switch (sysclk_source) {
@@ -68,20 +122,32 @@ uint32_t SYSCLK_GetFreq(void) {
     }
 }
 
-uint32_t I2C_GetPCLK1Freq(void) {
-    uint32_t SYSCLK = SYSCLK_GetFreq();
-    uint32_t ppre1 = (RCC->CFGR >> 10) & 0x7; // APB1 prescaler bits
+uint32_t APB1_GetPCLKFreq(void) {
+    uint32_t sysclk = SYSCLK_GetFreq();
+    uint32_t ppre1 = (RCC->CFGR >> 10) & 0x7;
 
-    uint8_t apb1_divider = DIV_1; // Default: no division
-    if (ppre1 >= 4) { // If prescaler is not DIV_1
-        apb1_divider = ppre1 - 3; // Map 4->DIV_2, 5->DIV_4, 6->DIV_8, 7->DIV_16
+    switch (ppre1) {
+        case 0b000: return sysclk;
+        case 0b100: return sysclk / 2;
+        case 0b101: return sysclk / 4;
+        case 0b110: return sysclk / 8;
+        case 0b111: return sysclk / 16;
+        default:    return sysclk; // reserved values
     }
-    
-    // Typical configuration for STM32F429 Discovery at 180 MHz:
-    // SYSCLK = 180 MHz
-    // AHB = 180 MHz (HPRE = 1)
-    // APB1 = 45 MHz (PPRE1 = 4, divide by 4)
-    // APB2 = 90 MHz (PPRE2 = 2, divide by 2)
-    
-    return SYSCLK / (1 << apb1_divider); // Calculate APB1 clock frequency
+}
+
+uint32_t APB2_GetPCLKFreq(void)
+{
+    uint32_t sysclk = SYSCLK_GetFreq();
+    uint32_t ppre2 = (RCC->CFGR >> 13) & 0x7;  // APB2 prescaler bits
+
+    switch (ppre2)
+    {
+        case 0b000: return sysclk;        // /1
+        case 0b100: return sysclk / 2;    // /2
+        case 0b101: return sysclk / 4;    // /4
+        case 0b110: return sysclk / 8;    // /8
+        case 0b111: return sysclk / 16;   // /16
+        default:    return sysclk;        // Reserved values → treat as /1
+    }
 }

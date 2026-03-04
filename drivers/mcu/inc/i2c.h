@@ -8,32 +8,32 @@
 #define TIMEOUT (100000U) // Arbitrary timeout value for I2C operations
 
 // CR1 Register Bits:
-#define PE      (1U << 0) // Peripheral Enable
-#define START   (1U << 8) // Start Generation
-#define STOP    (1U << 9) // Stop Generation
-#define ACK     (1U << 10) // Acknowledge Enable
-#define POS     (1U << 11) // Acknowledge/PEC Position (for data reception)
+#define I2C_PE      (1U << 0) // Peripheral Enable
+#define I2C_START   (1U << 8) // Start Generation
+#define I2C_STOP    (1U << 9) // Stop Generation
+#define I2C_ACK     (1U << 10) // Acknowledge Enable
+#define I2C_POS     (1U << 11) // Acknowledge/PEC Position (for data reception)
 
 // SR1 Register Bits:
-#define SB      (1U << 0) // Start Bit (Master Mode)
-#define ADDR    (1U << 1) // Address Sent/Matched
-#define BTF     (1U << 2) // Byte Transfer Finished
-#define RXNE    (1U << 6) // Data Register Not Empty
-#define TXE     (1U << 7) // Data Register Empty
+#define I2C_SB      (1U << 0) // Start Bit (Master Mode)
+#define I2C_ADDR    (1U << 1) // Address Sent/Matched
+#define I2C_BTF     (1U << 2) // Byte Transfer Finished
+#define I2C_RXNE    (1U << 6) // Data Register Not Empty
+#define I2C_TXE     (1U << 7) // Data Register Empty
 
 // SR2 Register Bits:
-#define MSL     (1U << 0) // Master/Slave
-#define BUSY    (1U << 1) // Bus Busy
-#define TRA     (1U << 2) // Transmitter/Receiver
+#define I2C_MSL     (1U << 0) // Master/Slave
+#define I2C_BUSY    (1U << 1) // Bus Busy
+#define I2C_TRA     (1U << 2) // Transmitter/Receiver
 
 // CCR Register Bits:
-#define FAST_MODE (1U << 15)
-#define SLOW_MODE (0U << 15)
+#define I2C_FAST_MODE (1U << 15)
+#define I2C_SLOW_MODE (0U << 15)
 /* Fast mode duty cycle options:
  * 0: T_low/_high = 2
  * 1: T_low/T_high = 16/9
  */
-#define DUTY      (1U << 14) 
+#define I2C_DUTY      (1U << 14) 
 
 enum TransferDirection {
     I2C_WRITE = 0,

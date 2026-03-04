@@ -1,5 +1,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <stdio.h>
+#include <unistd.h>
+#include "usart.h"
 
 register char* stack_ptr asm("sp");
 
@@ -15,7 +18,10 @@ caddr_t _sbrk(int incr) {
 }
 
 int _write(int file, char *ptr, int len) {
-    // TODO: Send chars to UART
+    (void)file;
+    for (int i = 0; i < len; i++) {
+        USART_Transmit(UART4, (uint8_t)ptr[i]);
+    }
     return len;
 }
 

@@ -6,28 +6,32 @@
 #include "pcf8574a.h"
 #include "hd44780u.h"
 #include "tcn75a.h"
+#include "usart.h"
+
+#include "rcc.h"
 
 #define TEMP_INIT_STR "Temp: "
 #define TEMP_BUFF_SIZE 16U
 
-void main(void) {
-    // Test LEDs and Button Initialization:
-    GPIO_InitTypeDef gpioLEDGreen = {GREEN_LED_PIN, GPIO_MODE_OUTPUT, GPIO_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE, GPIO_AF0};
-    GPIO_InitTypeDef gpioLEDRed = {RED_LED_PIN, GPIO_MODE_OUTPUT, GPIO_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE, GPIO_AF0};
-    GPIO_InitTypeDef gpioUsrBtn = {USER_BUTTON_PIN, GPIO_MODE_INPUT, GPIO_PULLUP, GPIO_SPEED_LOW, GPIO_AF0};
-    gpio_init(GPIOG, &gpioLEDGreen);
-    gpio_init(GPIOG, &gpioLEDRed);
-    gpio_init(GPIOA, &gpioUsrBtn);
+void uart_init(void) {
+    GPIO_InitTypeDef gpiouart4_tx = {GPIO_PIN_10, GPIO_MODE_ALTFN, GPIO_PUSH_PULL, GPIO_SPEED_FAST, GPIO_NONE, GPIO_AF8};
+    GPIO_InitTypeDef gpiouart4_rx = {GPIO_PIN_11, GPIO_MODE_ALTFN, GPIO_PULL_NONE, GPIO_SPEED_FAST, GPIO_PULLUP, GPIO_AF8};
+    gpio_init(GPIOC, &gpiouart4_tx);
+    gpio_init(GPIOC, &gpiouart4_rx);
 
-    // I2C Pins Initialization:
-    // LCD GPIO Initialization:
-    GPIO_InitTypeDef gpioDIP1 = {GPIO_PIN_3, GPIO_MODE_INPUT, GPIO_PULL_NONE, GPIO_SPEED_LOW, GPIO_AF0};
+    // Initialize UART4 for printf output
+    // 115200 baud, 1 stop bit, 8 data bits, no parity
+    USART_Init(UART4, 115200, STOP_1_BIT, USART_8_DATA_BITS, USART_PARITY_NONE); 
+}
+
+void i2c_init(void) {
+    // LCD I2C Pins:
     GPIO_InitTypeDef gpioI2C1SCL = {GPIO_PIN_6, GPIO_MODE_ALTFN, GPIO_OPEN_DRAIN, GPIO_SPEED_FAST, GPIO_PULLUP, GPIO_AF4};
     GPIO_InitTypeDef gpioI2C1SDA = {GPIO_PIN_7, GPIO_MODE_ALTFN, GPIO_OPEN_DRAIN, GPIO_SPEED_FAST, GPIO_PULLUP, GPIO_AF4};
     gpio_init(GPIOB, &gpioI2C1SCL);
     gpio_init(GPIOB, &gpioI2C1SDA);
-    gpio_init(GPIOB, &gpioDIP1);
 
+    // Temp Sensor I2C Pins:
     GPIO_InitTypeDef gpioI2C2SCL = {GPIO_PIN_10, GPIO_MODE_ALTFN, GPIO_OPEN_DRAIN, GPIO_SPEED_FAST, GPIO_PULLUP, GPIO_AF4};
     GPIO_InitTypeDef gpioI2C2SDA = {GPIO_PIN_11, GPIO_MODE_ALTFN, GPIO_OPEN_DRAIN, GPIO_SPEED_FAST, GPIO_PULLUP, GPIO_AF4};
     gpio_init(GPIOB, &gpioI2C2SCL);
@@ -36,12 +40,37 @@ void main(void) {
     PCF8574A_Init(I2C1); // Initialize the PCF8574A I/O Expander for LCD Control
     LCD_Init(I2C1);      // Initialize the LCD Display
     LCD_Clear(I2C1);     // Clear the LCD for the main loop messages
-    TCN75A_Init(I2C2);   // Initialize the TCN75A Temperature Sensor
-
-    float temperature = 0.0f; // Variable to store temperature reading from TCN75A sensor
-    STATUS_CODE status = STATUS_OK;
-    char tempStr[TEMP_BUFF_SIZE]; // Buffer to hold formatted temperature string for LCD display
     LCD_WriteString(I2C1, TEMP_INIT_STR); // Initial message on LCD
+
+    TCN75A_Init(I2C2);   // Initialize the TCN75A Temperature Sensor
+}
+
+void test_init(void) {
+    // Test LEDs & Button Initialization:
+    GPIO_InitTypeDef gpioLEDGreen = {GREEN_LED_PIN, GPIO_MODE_OUTPUT, GPIO_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE, GPIO_AF0};
+    GPIO_InitTypeDef gpioLEDRed = {RED_LED_PIN, GPIO_MODE_OUTPUT, GPIO_PUSH_PULL, GPIO_SPEED_LOW, GPIO_PULL_NONE, GPIO_AF0};
+    GPIO_InitTypeDef gpioUsrBtn = {USER_BUTTON_PIN, GPIO_MODE_INPUT, GPIO_PULLUP, GPIO_SPEED_LOW, GPIO_AF0};
+    gpio_init(GPIOG, &gpioLEDGreen);
+    gpio_init(GPIOG, &gpioLEDRed);
+    gpio_init(GPIOA, &gpioUsrBtn);
+
+    GPIO_InitTypeDef gpioDIP1 = {GPIO_PIN_3, GPIO_MODE_INPUT, GPIO_PULL_NONE, GPIO_SPEED_LOW, GPIO_AF0};
+    gpio_init(GPIOB, &gpioDIP1);
+}
+
+void main(void) {
+    SYSCLK_Config(RCC_CFGR_SW_HSI);
+
+    uart_init(); // Initialize UART4 for printf output
+
+    printf("\r\nHello STM32!\r\n");
+
+    i2c_init();
+    test_init();
+
+    STATUS_CODE status = STATUS_OK;
+    float temperature = 0.0f; // Variable to store temperature reading from TCN75A sensor
+    char tempStr[TEMP_BUFF_SIZE]; // Buffer to hold formatted temperature string for LCD display
     
     while (1) {
         status = TCN75A_ReadTemperature(I2C2, &temperature);

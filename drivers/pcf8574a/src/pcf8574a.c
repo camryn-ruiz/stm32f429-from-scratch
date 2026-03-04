@@ -7,7 +7,7 @@
 #include "delay.h"
 
 STATUS_CODE PCF8574A_Init(I2C_TypeDef* I2Cx) {
-    return I2C_Init(I2Cx, SLOW_MODE, DUTY, 100000); // Initialize I2C in standard mode (100 kHz)
+    return I2C_Init(I2Cx, I2C_SLOW_MODE, I2C_DUTY, 100000); // Initialize I2C in standard mode (100 kHz)
 }
 
 STATUS_CODE PCF8574A_WriteByte(I2C_TypeDef* I2Cx, uint8_t data) {

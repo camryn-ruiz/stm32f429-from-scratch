@@ -29,7 +29,11 @@ STATUS_CODE RCC_EnableGPIOx(GPIO_TypeDef* GPIOx);
 STATUS_CODE RCC_DisableGPIOx(GPIO_TypeDef* GPIOx);
 STATUS_CODE RCC_EnableI2Cx(I2C_TypeDef* I2Cx);
 STATUS_CODE RCC_DisableI2Cx(I2C_TypeDef* I2Cx);
+STATUS_CODE RCC_EnableUSARTx(USART_TypeDef* USARTx);
+STATUS_CODE RCC_DisableUSARTx(USART_TypeDef* USARTx);
+STATUS_CODE SYSCLK_Config(uint8_t clock_source);
 uint32_t SYSCLK_GetFreq(void);
-uint32_t I2C_GetPCLK1Freq(void);
+uint32_t APB1_GetPCLKFreq(void);
+uint32_t APB2_GetPCLKFreq(void);
 
 #endif // _RCC_H

@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [0.1.3]
+
+### Added
+- UART Functionality
+- `APB2_GetPCLKFreq()` to get the APB2 clock frequency
+
+### Changed
+- Made init functions for the seperate peripherals in `main.c` such as `i2c_init()`, `uart_init()`, `test_init()`
+- Renamed function `I2C_GetPCLK1Freq()` -> `APB1_GetPCLKFreq()`
+- Renamed bit specific macros to include perihperal prefix such as `I2C_TXE`
+
 ## [0.1.2]
 
 ### Added

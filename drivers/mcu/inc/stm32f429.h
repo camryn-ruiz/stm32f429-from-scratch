@@ -17,6 +17,20 @@
 // RCC Peripheral Pointer:
 #define RCC ((RCC_TypeDef*) RCC_BASE)
 
+// SYS Clock Switch Bits:
+#define RCC_CFGR_SW 0x03
+#define RCC_CFGR_SW_HSI 0x00
+#define RCC_CFGR_SW_HSE 0x01
+#define RCC_CFGR_SW_PLL 0x10
+
+// SYS Clock CR Register Bits:
+#define RCC_CR_HSION (1U << 0)
+#define RCC_CR_HSIRDY (1U << 1)
+#define RCC_CR_HSEON (1U << 16)
+#define RCC_CR_HSERDY (1U << 17)
+#define RCC_CR_PLLON (1U << 24)
+#define RCC_CR_PLLRDY (1U << 25)
+
 // RCC AHB1 Peripheral Clock Enable Bits:
 #define RCC_AHB1ENR_GPIOAEN (1U << 0)
 #define RCC_AHB1ENR_GPIOBEN (1U << 1)

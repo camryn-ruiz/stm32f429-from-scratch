@@ -7,7 +7,6 @@
 #include "hd44780u.h"
 #include "tcn75a.h"
 #include "usart.h"
-
 #include "rcc.h"
 
 #define TEMP_INIT_STR "Temp: "
@@ -60,25 +59,30 @@ void test_init(void) {
 
 void main(void) {
     SYSCLK_Config(RCC_CFGR_SW_HSI);
-
-    uart_init(); // Initialize UART4 for printf output
-
-    printf("\r\nHello STM32!\r\n");
-
-    i2c_init();
-    test_init();
-
     STATUS_CODE status = STATUS_OK;
+
+    uart_init();
+    printf("UART Initialized\r\n");
+    i2c_init();
+    printf("I2C Initialized\r\n");
+    test_init();
+    printf("Test Pins Initialized\r\n");
+
     float temperature = 0.0f; // Variable to store temperature reading from TCN75A sensor
     char tempStr[TEMP_BUFF_SIZE]; // Buffer to hold formatted temperature string for LCD display
     
     while (1) {
         status = TCN75A_ReadTemperature(I2C2, &temperature);
+        if (status != STATUS_OK) {
+            printf("Error reading temperature: %d\r\n", status);
+            continue; // Skip the rest of the loop and try reading again
+        }
         LCD_SetCursor(I2C1, 0, 6); // Set cursor to the position after the first print (only overwrite the temperature value, not the "Temp: " label)
         if (gpio_read_pin(GPIOB, GPIO_PIN_3)) { // Check if DIP Switch 1 is ON (active high)
             gpio_set_pin(GPIOG, GREEN_LED_PIN); // Toggle Green LED to indicate main loop is running
             gpio_set_pin(GPIOG, RED_LED_PIN); // Toggle Green LED to indicate main loop is running
             snprintf(tempStr, sizeof(tempStr), "%.2f C", temperature); // Format temperature reading into string with 2 decimal places
+            printf("Temperature: %.2f C\r\n", temperature); // Print temperature to UART for debugging
             LCD_WriteString(I2C1, tempStr);
             delay_ms(1000);
         }
@@ -86,6 +90,7 @@ void main(void) {
             gpio_clear_pin(GPIOG, GREEN_LED_PIN); // Toggle Green LED to indicate main loop is running
             gpio_clear_pin(GPIOG, RED_LED_PIN); // Toggle Green LED to indicate main loop is running
             snprintf(tempStr, sizeof(tempStr), "%.2f F", temperature * (9.0f/5.0f) + 32.0f); // Format temperature reading into string with 2 decimal places
+            printf("Temperature: %.2f F\r\n", temperature * (9.0f/5.0f) + 32.0f); // Print temperature to UART for debugging
             LCD_WriteString(I2C1, tempStr);
             delay_ms(1000);
         }

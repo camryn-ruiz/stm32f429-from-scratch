@@ -9,8 +9,8 @@ if [[ "$ID" == "ubuntu" ]]; then
 	sudo apt install gcc-arm-none-eabi
 	sudo apt install openocd
     echo "Running on Ubuntu"
-elif [[ "$ID" == "arch" ]]; then
-	sudo pacman -S arm-none-eabi-gcc 
+elif [[ "$ID" == "arch" ]]; then 
+	sudo pacman -S arm-none-eabi-gcc arm-none-eabi-binutils arm-none-eabi-newlib
 	sudo pacman -S openocd
     echo "Running on Arch Linux"
 else

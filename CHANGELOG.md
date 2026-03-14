@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+
+## [0.1.4]
+
+### Added
+- Added ability to work on this project on my personal laptop which runs arch
+- Added `delay_us` function for microsecond delays
+
+### Changed
+- Removed printf usage in code (using standard USART/UART Transmit)
+- Compiler to `v10.2.1` from `v13.2.1` was running into hardships with printf implementation probably some newlib incompatibilities when changing from Ubuntu to Arch
+- main program function is changed to display both Fahr and Cels
+- USART blocking with `TC` changed to wait for `TXE`
+
 ## [0.1.3]
 
 ### Added

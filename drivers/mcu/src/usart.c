@@ -1,6 +1,7 @@
 #include "usart.h"
 #include "rcc.h"
 #include "stm32f429.h"
+#include "delay.h"
 
 static inline uint32_t calculate_pclk(USART_TypeDef* USARTx) {
     // Get the peripheral clock frequency for the USART
@@ -58,7 +59,7 @@ STATUS_CODE USART_Transmit(USART_TypeDef* USARTx, uint8_t data) {
 
     USARTx->DR = data; // Write the data to the Data Register
 
-    while (!(USARTx->SR & USART_TC)); // Wait until the transmission is complete
+    //while (!(USARTx->SR & USART_TC)); // Wait until the transmission is complete
 
     return STATUS_OK;
 }
@@ -77,6 +78,7 @@ STATUS_CODE USART_TransmitString(USART_TypeDef* USARTx, const char* str) {
     while (*str) {
         USART_Transmit(USARTx, (uint8_t)(*str)); // Transmit each character in the string
         str++;
+		delay_us(5);
     }
 
     return STATUS_OK;

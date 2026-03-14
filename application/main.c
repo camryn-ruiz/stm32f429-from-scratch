@@ -10,7 +10,8 @@
 #include "rcc.h"
 
 #define TEMP_INIT_STR "Temp: "
-#define TEMP_BUFF_SIZE 16U
+#define TEMP_BUFF_SIZE 64U
+#define INIT_MSG "System Initialized!\r\n"
 
 void uart_init(void) {
     GPIO_InitTypeDef gpiouart4_tx = {GPIO_PIN_10, GPIO_MODE_ALTFN, GPIO_PUSH_PULL, GPIO_SPEED_FAST, GPIO_NONE, GPIO_AF8};
@@ -62,37 +63,63 @@ void main(void) {
     STATUS_CODE status = STATUS_OK;
 
     uart_init();
-    printf("UART Initialized\r\n");
     i2c_init();
-    printf("I2C Initialized\r\n");
     test_init();
-    printf("Test Pins Initialized\r\n");
+	delay_ms(50);
 
-    float temperature = 0.0f; // Variable to store temperature reading from TCN75A sensor
-    char tempStr[TEMP_BUFF_SIZE]; // Buffer to hold formatted temperature string for LCD display
-    
+    float temperature = 0.0f; // Temperature reading
+    char tempStr[TEMP_BUFF_SIZE]; // Buffer for LCD/UART
+
+	USART_TransmitString(UART4, INIT_MSG);
+
+    LCD_Clear(I2C1);
+    LCD_SetCursor(I2C1, 0, 0);
+    LCD_WriteString(I2C1, "Cels:");       // Label for Celsius
+    LCD_SetCursor(I2C1, 1, 0);
+    LCD_WriteString(I2C1, "Fahr:");       // Label for Fahrenheit
+
     while (1) {
         status = TCN75A_ReadTemperature(I2C2, &temperature);
         if (status != STATUS_OK) {
-            printf("Error reading temperature: %d\r\n", status);
-            continue; // Skip the rest of the loop and try reading again
+            // Could print error to UART
+			USART_TransmitString(UART4, "Temp Read Failed");
+            continue;
         }
-        LCD_SetCursor(I2C1, 0, 6); // Set cursor to the position after the first print (only overwrite the temperature value, not the "Temp: " label)
-        if (gpio_read_pin(GPIOB, GPIO_PIN_3)) { // Check if DIP Switch 1 is ON (active high)
-            gpio_set_pin(GPIOG, GREEN_LED_PIN); // Toggle Green LED to indicate main loop is running
-            gpio_set_pin(GPIOG, RED_LED_PIN); // Toggle Green LED to indicate main loop is running
-            snprintf(tempStr, sizeof(tempStr), "%.2f C", temperature); // Format temperature reading into string with 2 decimal places
-            printf("Temperature: %.2f C\r\n", temperature); // Print temperature to UART for debugging
-            LCD_WriteString(I2C1, tempStr);
-            delay_ms(1000);
+
+        // Convert to Celsius integers
+        int tempC_int  = (int)temperature;
+        int tempC_frac = (int)((temperature - tempC_int) * 100);
+
+        // Convert to Fahrenheit integers
+        float tempF = temperature * 9.0f / 5.0f + 32.0f;
+        int tempF_int  = (int)tempF;
+        int tempF_frac = (int)((tempF - tempF_int) * 100);
+
+        // Prepare strings padded with spaces to clear previous LCD data
+        snprintf(tempStr, sizeof(tempStr), "%d.%02d C   ", tempC_int, tempC_frac);
+        LCD_SetCursor(I2C1, 0, 6); 
+        LCD_WriteString(I2C1, tempStr);
+
+        snprintf(tempStr, sizeof(tempStr), "%d.%02d F   ", tempF_int, tempF_frac);
+        LCD_SetCursor(I2C1, 1, 6);
+        LCD_WriteString(I2C1, tempStr);
+
+        // Also send to UART for debugging
+        snprintf(tempStr, sizeof(tempStr), "Temp: %d.%02d C\r\n", tempC_int, tempC_frac);
+        USART_TransmitString(UART4, tempStr);
+
+		snprintf(tempStr, sizeof(tempStr), "Temp: %d.%02d F\r\n", tempF_int, tempF_frac);
+		USART_TransmitString(UART4, tempStr);
+
+        // Toggle LEDs based on DIP switch
+        if (gpio_read_pin(GPIOB, GPIO_PIN_3)) {
+            gpio_set_pin(GPIOG, GREEN_LED_PIN);
+            gpio_set_pin(GPIOG, RED_LED_PIN);
+        } else {
+            gpio_clear_pin(GPIOG, GREEN_LED_PIN);
+            gpio_clear_pin(GPIOG, RED_LED_PIN);
         }
-        else {
-            gpio_clear_pin(GPIOG, GREEN_LED_PIN); // Toggle Green LED to indicate main loop is running
-            gpio_clear_pin(GPIOG, RED_LED_PIN); // Toggle Green LED to indicate main loop is running
-            snprintf(tempStr, sizeof(tempStr), "%.2f F", temperature * (9.0f/5.0f) + 32.0f); // Format temperature reading into string with 2 decimal places
-            printf("Temperature: %.2f F\r\n", temperature * (9.0f/5.0f) + 32.0f); // Print temperature to UART for debugging
-            LCD_WriteString(I2C1, tempStr);
-            delay_ms(1000);
-        }
+
+        delay_ms(1000);
     }
 }
